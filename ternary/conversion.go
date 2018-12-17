@@ -1,5 +1,7 @@
 package ternary
 
+import "bytes"
+
 func BytesToTrits(bytes []byte) Trinary {
 	size := len(bytes)
 	trits := make([]Trit, size*NUMBER_OF_TRITS_IN_A_BYTE)
@@ -16,4 +18,17 @@ func BytesToTrits(bytes []byte) Trinary {
 	}
 
 	return trits
+}
+
+func TritsToString(trits Trinary, offset int, size int) string {
+	var buffer bytes.Buffer
+	for i := 0; i < (size + NUMBER_OF_TRITS_IN_A_TRYTE - 1) / NUMBER_OF_TRITS_IN_A_TRYTE; i++ {
+		j := int(trits[offset + i * NUMBER_OF_TRITS_IN_A_TRYTE]) + int(trits[offset + i * NUMBER_OF_TRITS_IN_A_TRYTE + 1]) * NUMBER_OF_TRITS_IN_A_TRYTE + int(trits[offset + i * NUMBER_OF_TRITS_IN_A_TRYTE + 2]) * NUMBER_OF_TRITS_IN_A_TRYTE * NUMBER_OF_TRITS_IN_A_TRYTE;
+		if j < 0 {
+			j += len(TRYTE_ALPHABET)
+		}
+		buffer.WriteString(TRYTE_ALPHABET[j]);
+	}
+
+	return buffer.String()
 }
