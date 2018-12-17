@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
+	"github.com/iotadevelopment/go/curl"
 	"github.com/iotadevelopment/go/ternary"
 	"os"
 	"time"
@@ -35,7 +36,7 @@ func main() {
 
 	// issue hash requests
 	for i := 0; i < 40000; i++ {
-		resultChannel := batchhasher.CURLP81.Hash(trits)
+		resultChannel := curl.CURLP81.Hash(trits)
 
 		collectedChannels[i] = resultChannel
 	}
