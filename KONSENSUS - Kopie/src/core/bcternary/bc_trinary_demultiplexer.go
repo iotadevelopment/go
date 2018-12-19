@@ -1,18 +1,20 @@
-package ternary
+package bcternary
 
-type BCTernaryDemultiplexer struct {
+import "core/ternary"
+
+type BCTrinaryDemultiplexer struct {
     bcTrinary BCTrinary
 }
 
-func NewBCTernaryDemultiplexer(bcTrinary BCTrinary) *BCTernaryDemultiplexer {
-    this := &BCTernaryDemultiplexer{bcTrinary: bcTrinary}
+func NewBCTrinaryDemultiplexer(bcTrinary BCTrinary) *BCTrinaryDemultiplexer {
+    this := &BCTrinaryDemultiplexer{bcTrinary: bcTrinary}
 
     return this
 }
 
-func (this *BCTernaryDemultiplexer) Get(index int) Trinary {
+func (this *BCTrinaryDemultiplexer) Get(index int) ternary.Trinary {
     length := len(this.bcTrinary.Lo)
-    result := make(Trinary, length)
+    result := make(ternary.Trinary, length)
 
     for i := 0; i < length; i++ {
         low := (this.bcTrinary.Lo[i] >> uint(index)) & 1
