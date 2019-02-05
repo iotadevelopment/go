@@ -1,30 +1,17 @@
 package ixi
 
-import (
-    "bufio"
-    "fmt"
-    "os"
-)
+var loadedPlugins = make([]*Plugin, 0)
 
-var loadedModules = make([]*IXIModule, 0)
-
-func Load(modules ...*IXIModule) {
-    loadedModules = append(loadedModules, modules...)
-
-    for _, module := range modules {
-        module.TriggerLoad()
-    }
+func Load(plugins ...*Plugin) {
+    loadedPlugins = append(loadedPlugins, plugins...)
 }
 
 func Run() {
-    for _, module := range loadedModules {
-        module.TriggerConfigure()
+    for _, plugin := range loadedPlugins {
+        plugin.Events.Configure.Trigger()
     }
 
-    for _, module := range loadedModules {
-        module.TriggerRun()
+    for _, plugin := range loadedPlugins {
+        plugin.Events.Run.Trigger()
     }
-
-    fmt.Print("Press 'Enter' to exit...")
-    bufio.NewReader(os.Stdin).ReadRune()
 }

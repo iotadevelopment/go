@@ -12,19 +12,19 @@ import (
 func main() {
 	ixi.Load(
 		// allow the node to be configured through a config file
-		config.MODULE,
+		config.PLUGIN,
 
 		// allow the node to be configure via cli parameters
-		cli.MODULE,
+		cli.PLUGIN,
 
 		// add the gossip layer
-		gossip.MODULE,
+		gossip.PLUGIN,
 
 		// add persistence layer
-		tangle.MODULE,
+		tangle.PLUGIN,
 
 		// show a status screen while the node is running
-		statusscreen.MODULE,
+		statusscreen.PLUGIN,
 	)
 
 	ixi.Run()

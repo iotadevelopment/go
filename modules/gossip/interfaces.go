@@ -17,7 +17,7 @@ type PeerErrorConsumer func(peer network.Peer, err error)
 type PeerTransactionConsumer func(peer network.Peer, transaction transaction.Transaction)
 
 type GossipIXI interface {
-    GetTcpServer() tcp.Server
+    GetTcpServer() *tcp.Server
 
     OnConnect(callback PeerConsumer) GossipIXI
     OnError(callback ErrorConsumer) GossipIXI

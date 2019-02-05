@@ -7,20 +7,20 @@ import (
     "strings"
 )
 
-func onAddInt(param *parameter.IntParameter) {
+func onAddInt(param parameter.IntParameter) {
     flagName := strings.Replace(strings.Replace(strings.ToLower(param.GetName()), "/", "-", 1), "_", "-", -1)
 
     IXI().AddIntParameter(param.GetValuePtr(), flagName, param.GetDescription())
 }
 
-var MODULE = ixi.NewIXIModule().OnConfigure(func() {
-    for _, param := range parameter.IXI().GetInts() {
+var PLUGIN = ixi.NewPlugin(func() {
+    for _, param := range parameter.GetInts() {
         onAddInt(param)
     }
 
-    parameter.IXI().OnAddInt(onAddInt)
+    parameter.Events.AddInt.Attach(onAddInt)
 
     flag.Usage = func() { IXI().PrintUsage() }
-}).OnRun(func() {
+}, func() {
     flag.Parse()
 })

@@ -6,8 +6,8 @@ import (
     "strings"
 )
 
-var MODULE = ixi.NewIXIModule().OnConfigure(func() {
-    parameter.IXI().OnAddInt(func(param *parameter.IntParameter) {
+var PLUGIN = ixi.NewPlugin(func() {
+    parameter.Events.AddInt.Attach(func(param parameter.IntParameter) {
         parsedAddress := strings.Split(param.GetName(), "/")
         if len(parsedAddress) != 2 {
             panic("invalid parameter name - expected format: \"<config_section>/<variable_name>\"")

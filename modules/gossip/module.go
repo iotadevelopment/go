@@ -3,18 +3,15 @@ package gossip
 import (
     "github.com/iotadevelopment/go/modules/gossip/protocol"
     "github.com/iotadevelopment/go/packages/ixi"
-    "github.com/iotadevelopment/go/packages/transaction"
     "github.com/iotadevelopment/go/packages/network"
-    "github.com/iotadevelopment/go/packages/parameter"
+    "github.com/iotadevelopment/go/packages/transaction"
 )
 
 var gossipIXI = IXI()
 var tcpServer = gossipIXI.GetTcpServer()
 
 func configure() {
-    initializeParameters(parameter.IXI())
-
-    tcpServer.OnConnect(func(peer network.Peer) {
+    tcpServer.Events.Connect.Attach(func(peer network.Peer) {
         gossipIXI.TriggerConnect(peer)
 
         gossipProtocol := protocol.NewProtocol().OnReceivePacketData(func(data []byte) {
@@ -32,7 +29,9 @@ func configure() {
         }).OnError(func(err error) {
             gossipIXI.TriggerPeerError(peer, err)
         })
-    }).OnError(func(err error) {
+    })
+
+    tcpServer.Events.Error.Attach(func(err error) {
         gossipIXI.TriggerError(err)
     })
 }
@@ -47,4 +46,4 @@ func run() {
     go tcpServer.Listen(PORT_TCP.GetValue())
 }
 
-var MODULE = ixi.NewIXIModule().OnConfigure(configure).OnRun(run)
+var PLUGIN = ixi.NewPlugin(configure, run)

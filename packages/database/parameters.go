@@ -4,4 +4,4 @@ import (
     "github.com/iotadevelopment/go/packages/parameter"
 )
 
-var DIRECTORY = parameter.IXI().AddString("DATABASE/DIRECTORY", "mainnetdb", "path to the database folder")
+var DIRECTORY = parameter.AddString("DATABASE/DIRECTORY", "mainnetdb", "path to the database folder")

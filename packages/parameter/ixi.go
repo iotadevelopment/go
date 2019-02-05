@@ -1,87 +1,56 @@
 package parameter
 
-type ParameterIXI struct {
-    intParameters     map[string]*IntParameter
-    stringParameters  map[string]*StringParameter
-    addIntHandlers    []IntParameterConsumer
-    addStringHandlers []StringParameterConsumer
-}
-
-var globalInstance *ParameterIXI = nil
-
-func IXI() *ParameterIXI {
-    if globalInstance == nil {
-        globalInstance = &ParameterIXI{
-            make(map[string]*IntParameter),
-            make(map[string]*StringParameter),
-            make([]IntParameterConsumer, 0),
-            make([]StringParameterConsumer, 0),
-        }
-    }
-
-    return globalInstance
-}
+var (
+    intParameters     = make(map[string]IntParameter)
+    stringParameters  = make(map[string]StringParameter)
+)
 
 //region IXI METHODS ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-func (this *ParameterIXI) AddInt(name string, defaultValue int, description string) *IntParameter {
-    if this.intParameters[name] != nil {
+var Events = struct {
+    AddInt    *intParameterEventManager
+    AddString *stringParameterEventManager
+}{
+    AddInt:    &intParameterEventManager{make(map[uintptr]IntParameterConsumer)},
+    AddString: &stringParameterEventManager{make(map[uintptr]StringParameterConsumer)},
+}
+
+func AddInt(name string, defaultValue int, description string) IntParameter {
+    if intParameters[name] != nil {
         panic("duplicate parameter - \"" + name + "\" was defined already")
     }
 
-    this.intParameters[name] = newIntParameter(name, defaultValue, description)
+    newParameter := newIntParameter(name, defaultValue, description)
+    intParameters[name] = newParameter
 
-    this.TriggerAddInt(this.intParameters[name])
+    Events.AddInt.Trigger(newParameter)
 
-    return this.intParameters[name]
+    return newParameter
 }
 
-func (this *ParameterIXI) GetInt(name string) *IntParameter {
-    return this.intParameters[name]
+func GetInt(name string) IntParameter {
+    return intParameters[name]
 }
 
-func (this *ParameterIXI) OnAddInt(handler IntParameterConsumer) *ParameterIXI {
-    this.addIntHandlers = append(this.addIntHandlers, handler)
-
-    return this
+func GetInts() map[string]IntParameter {
+    return intParameters
 }
 
-func (this *ParameterIXI) TriggerAddInt(param *IntParameter) {
-    for _, handler := range this.addIntHandlers {
-        handler(param)
-    }
-}
-
-func (this *ParameterIXI) GetInts() map[string]*IntParameter {
-    return this.intParameters
-}
-
-func (this *ParameterIXI) AddString(name string, defaultValue string, description string) *StringParameter {
-    if this.intParameters[name] != nil {
+func AddString(name string, defaultValue string, description string) StringParameter {
+    if intParameters[name] != nil {
         panic("duplicate parameter - \"" + name + "\" was defined already")
     }
 
-    this.stringParameters[name] = newStringParameter(name, defaultValue, description)
+    newParameter := newStringParameter(name, defaultValue, description)
+    stringParameters[name] = newParameter
 
-    this.TriggerAddString(this.stringParameters[name])
+    Events.AddString.Trigger(newParameter)
 
-    return this.stringParameters[name]
+    return stringParameters[name]
 }
 
-func (this *ParameterIXI) GetString(name string) *StringParameter {
-    return this.stringParameters[name]
-}
-
-func (this *ParameterIXI) OnAddString(handler StringParameterConsumer) *ParameterIXI {
-    this.addStringHandlers = append(this.addStringHandlers, handler)
-
-    return this
-}
-
-func (this *ParameterIXI) TriggerAddString(param *StringParameter) {
-    for _, handler := range this.addStringHandlers {
-        handler(param)
-    }
+func GetString(name string) StringParameter {
+    return stringParameters[name]
 }
 
 //endregion ////////////////////////////////////////////////////////////////////////////////////////////////////////////

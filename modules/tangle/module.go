@@ -10,7 +10,7 @@ import (
     "strconv"
 )
 
-var MODULE = ixi.NewIXIModule().OnRun(func() {
+var PLUGIN = ixi.NewPlugin(func() {
     transactionsDatabase := database.Get("transactions")
 
     counter := 0

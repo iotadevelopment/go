@@ -7,7 +7,7 @@ import (
 )
 
 type gossipIXIImplementation struct {
-    tcpServer                  tcp.Server
+    tcpServer                  *tcp.Server
     connectHandlers            []PeerConsumer
     errorHandlers              []ErrorConsumer
     receiveDataHandlers        []PeerDataConsumer
@@ -29,7 +29,7 @@ func IXI() GossipIXI {
     return globalInstance
 }
 
-func (this *gossipIXIImplementation) GetTcpServer() tcp.Server {
+func (this *gossipIXIImplementation) GetTcpServer() *tcp.Server {
     return this.tcpServer
 }
 

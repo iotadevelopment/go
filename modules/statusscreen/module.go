@@ -40,13 +40,13 @@ func PrintTPSParsed() {
     tpsParsed = 0
 }
 
-var MODULE = ixi.NewIXIModule().OnConfigure(func() {
+var PLUGIN = ixi.NewPlugin(func() {
     gossip.IXI().OnReceivePacketData(func(peer network.Peer, data []byte) {
         tpsReceived++
     }).OnReceiveTransaction(func(peer network.Peer, transaction transaction.Transaction) {
         tpsParsed++
     })
-}).OnRun(func() {
+}, func() {
     for {
         terminal.Clear()
 
