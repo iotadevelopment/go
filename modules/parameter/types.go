@@ -1,21 +1,19 @@
 package parameter
 
-type IntParameter interface {
-    GetName() string
-    GetValue() int
-    GetValuePtr() *int
-    GetDefaultValue() int
-    GetDescription() string
+type IntParameter struct {
+    Name         string
+    Value        *int
+    DefaultValue int
+    Description  string
 }
 
-type StringParameter interface {
-    GetName() string
-    GetValue() string
-    GetValuePtr() *string
-    GetDefaultValue() string
-    GetDescription() string
+type StringParameter struct {
+    Name         string
+    Value        *string
+    DefaultValue string
+    Description  string
 }
 
-type IntParameterConsumer = func(param IntParameter)
+type IntParameterConsumer = func(param *IntParameter)
 
-type StringParameterConsumer = func(param StringParameter)
+type StringParameterConsumer = func(param *StringParameter)

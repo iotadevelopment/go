@@ -6,15 +6,15 @@ import (
     "github.com/iotadevelopment/go/packages/network/tcp"
 )
 
-type PeerConsumer func(peer network.Peer)
+type PeerConsumer = func(peer network.Peer)
 
-type ErrorConsumer func(err error)
+type ErrorConsumer = func(err error)
 
-type PeerDataConsumer func(peer network.Peer, data []byte)
+type PeerDataConsumer = func(peer network.Peer, data []byte)
 
-type PeerErrorConsumer func(peer network.Peer, err error)
+type PeerErrorConsumer = func(peer network.Peer, err error)
 
-type PeerTransactionConsumer func(peer network.Peer, transaction transaction.Transaction)
+type PeerTransactionConsumer = func(peer network.Peer, transaction transaction.Transaction)
 
 type GossipIXI interface {
     GetTcpServer() *tcp.Server

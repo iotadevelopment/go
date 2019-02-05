@@ -2,25 +2,36 @@ package cli
 
 import (
     "flag"
-    "github.com/iotadevelopment/go/packages/ixi"
     "github.com/iotadevelopment/go/modules/parameter"
+    "github.com/iotadevelopment/go/packages/ixi"
     "strings"
 )
 
-func onAddInt(param parameter.IntParameter) {
-    flagName := strings.Replace(strings.Replace(strings.ToLower(param.GetName()), "/", "-", 1), "_", "-", -1)
+func onAddIntParameter(param *parameter.IntParameter) {
+    flagName := strings.Replace(strings.Replace(strings.ToLower(param.Name), "/", "-", 1), "_", "-", -1)
 
-    IXI().AddIntParameter(param.GetValuePtr(), flagName, param.GetDescription())
+    addIntParameter(param.Value, flagName, param.Description)
 }
 
-var PLUGIN = ixi.NewPlugin(func() {
+func onAddStringParameter(param *parameter.StringParameter) {
+    flagName := strings.Replace(strings.Replace(strings.ToLower(param.Name), "/", "-", 1), "_", "-", -1)
+
+    addStringParameter(param.Value, flagName, param.Description)
+}
+
+func configure() {
     for _, param := range parameter.GetInts() {
-        onAddInt(param)
+        onAddIntParameter(param)
     }
 
-    parameter.Events.AddInt.Attach(onAddInt)
+    for _, param := range parameter.GetStrings() {
+        onAddStringParameter(param)
+    }
 
-    flag.Usage = func() { IXI().PrintUsage() }
-}, func() {
-    flag.Parse()
-})
+    parameter.Events.AddInt.Attach(onAddIntParameter)
+    parameter.Events.AddString.Attach(onAddStringParameter)
+
+    flag.Usage = printUsage
+}
+
+var PLUGIN = ixi.NewPlugin(configure, flag.Parse)

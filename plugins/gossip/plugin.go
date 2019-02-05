@@ -43,7 +43,7 @@ func parseTransaction(peer network.Peer, data []byte) {
 }
 
 func run() {
-    go tcpServer.Listen(PORT_TCP.GetValue())
+    go tcpServer.Listen(*PORT_TCP.Value)
 }
 
 var PLUGIN = ixi.NewPlugin(configure, run)

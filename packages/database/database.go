@@ -33,14 +33,16 @@ func (this *databaseImpl) Open() error {
     defer this.openLock.Unlock()
 
     if this.db == nil {
-        if _, err := os.Stat(DIRECTORY.GetValue()); os.IsNotExist(err) {
-            if err := os.Mkdir(DIRECTORY.GetValue(), 0700); err != nil {
+        directory := *DIRECTORY.Value
+
+        if _, err := os.Stat(directory); os.IsNotExist(err) {
+            if err := os.Mkdir(directory, 0700); err != nil {
                 return err
             }
         }
 
         opts := badger.DefaultOptions
-        opts.Dir = DIRECTORY.GetValue() + string(filepath.Separator) + this.name
+        opts.Dir = directory + string(filepath.Separator) + this.name
         opts.ValueDir = opts.Dir
         opts.Logger = &logger{}
         opts.Truncate = true

@@ -5,16 +5,7 @@ import (
     "reflect"
 )
 
-type serverEvents struct {
-    Connect *peerConsumerEvent
-    Error   *errorConsumerEvent
-}
-
 //region errorConsumerEvent ////////////////////////////////////////////////////////////////////////////////////////////
-
-type errorConsumerEvent struct {
-    callbacks map[uintptr]ErrorConsumer
-}
 
 func (this *errorConsumerEvent) Attach(callback ErrorConsumer) {
     this.callbacks[reflect.ValueOf(callback).Pointer()] = callback
@@ -33,10 +24,6 @@ func (this *errorConsumerEvent) Trigger(err error) {
 //endregion ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //region peerConsumerEvent /////////////////////////////////////////////////////////////////////////////////////////////
-
-type peerConsumerEvent struct {
-    callbacks map[uintptr]PeerConsumer
-}
 
 func (this *peerConsumerEvent) Attach(callback PeerConsumer) {
     this.callbacks[reflect.ValueOf(callback).Pointer()] = callback
