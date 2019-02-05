@@ -5,6 +5,7 @@ import (
 	"github.com/iotadevelopment/go/modules/config"
 	"github.com/iotadevelopment/go/modules/gossip"
 	"github.com/iotadevelopment/go/modules/statusscreen"
+	"github.com/iotadevelopment/go/modules/tangle"
 	"github.com/iotadevelopment/go/packages/ixi"
 )
 
@@ -18,6 +19,8 @@ func main() {
 
 		// add the gossip layer
 		gossip.MODULE,
+
+		tangle.MODULE,
 
 		// show a banner when the node has started
 		statusscreen.MODULE,

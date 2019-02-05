@@ -29,7 +29,10 @@ func (this *PackageState) Consume(protocol interfaces.Protocol, data []byte, off
     this.offset += bytesRead
 
     if this.offset == PACKAGE_SIZE {
-        protocol.TriggerReceivePacketData(this.buffer)
+        transactionData := make([]byte, len(this.buffer))
+        copy(transactionData, this.buffer)
+
+        protocol.TriggerReceivePacketData(transactionData)
         protocol.SetState(PACKAGE_TYPE_STATE)
         this.Reset()
     }

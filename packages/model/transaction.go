@@ -80,6 +80,7 @@ type Transaction struct {
 
     Hash                          ternary.Trits
     WeightMagnitude               int
+    Bytes                         []byte
 }
 
 func NewTransactionFromTrits(trits ternary.Trits, optionalHash ...ternary.Trits) *Transaction {
@@ -110,7 +111,8 @@ func NewTransactionFromTrits(trits ternary.Trits, optionalHash ...ternary.Trits)
 }
 
 func NewTransactionFromBytes(bytes []byte) *Transaction {
-    return NewTransactionFromTrits(ternary.BytesToTrits(bytes)[:TRANSACTION_SIZE])
+    transaction := NewTransactionFromTrits(ternary.BytesToTrits(bytes)[:TRANSACTION_SIZE])
+    transaction.Bytes = bytes
 
-    //fmt.Println(ternary.TritsToString(hashTrits, 0, len(hashTrits)))
+    return transaction
 }
