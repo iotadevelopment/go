@@ -3,7 +3,7 @@ package gossip
 import (
     "github.com/iotadevelopment/go/modules/gossip/protocol"
     "github.com/iotadevelopment/go/packages/ixi"
-    "github.com/iotadevelopment/go/packages/model"
+    "github.com/iotadevelopment/go/packages/transaction"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/parameter"
 )
@@ -38,7 +38,7 @@ func configure() {
 }
 
 func parseTransaction(peer network.Peer, data []byte) {
-    transaction := model.NewTransactionFromBytes(data)
+    transaction := transaction.FromBytes(data)
 
     gossipIXI.TriggerReceiveTransaction(peer, transaction)
 }

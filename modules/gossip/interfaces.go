@@ -1,7 +1,7 @@
 package gossip
 
 import (
-    "github.com/iotadevelopment/go/packages/model"
+    "github.com/iotadevelopment/go/packages/transaction"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/network/tcp"
 )
@@ -14,7 +14,7 @@ type PeerDataConsumer func(peer network.Peer, data []byte)
 
 type PeerErrorConsumer func(peer network.Peer, err error)
 
-type PeerTransactionConsumer func(peer network.Peer, transaction *model.Transaction)
+type PeerTransactionConsumer func(peer network.Peer, transaction transaction.Transaction)
 
 type GossipIXI interface {
     GetTcpServer() tcp.Server
@@ -33,5 +33,5 @@ type GossipIXI interface {
     TriggerDisconnect(peer network.Peer) GossipIXI
     TriggerPeerError(peer network.Peer, err error) GossipIXI
     TriggerReceivePacketData(peer network.Peer, data []byte) GossipIXI
-    TriggerReceiveTransaction(peer network.Peer, transaction *model.Transaction) GossipIXI
+    TriggerReceiveTransaction(peer network.Peer, transaction transaction.Transaction) GossipIXI
 }

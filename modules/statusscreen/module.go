@@ -4,7 +4,7 @@ import (
     "fmt"
     "github.com/iotadevelopment/go/modules/gossip"
     "github.com/iotadevelopment/go/packages/ixi"
-    "github.com/iotadevelopment/go/packages/model"
+    "github.com/iotadevelopment/go/packages/transaction"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/terminal"
     "time"
@@ -43,7 +43,7 @@ func PrintTPSParsed() {
 var MODULE = ixi.NewIXIModule().OnConfigure(func() {
     gossip.IXI().OnReceivePacketData(func(peer network.Peer, data []byte) {
         tpsReceived++
-    }).OnReceiveTransaction(func(peer network.Peer, transaction *model.Transaction) {
+    }).OnReceiveTransaction(func(peer network.Peer, transaction transaction.Transaction) {
         tpsParsed++
     })
 }).OnRun(func() {

@@ -1,7 +1,7 @@
 package gossip
 
 import (
-    "github.com/iotadevelopment/go/packages/model"
+    "github.com/iotadevelopment/go/packages/transaction"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/network/tcp"
 )
@@ -123,7 +123,7 @@ func (this *gossipIXIImplementation) TriggerReceivePacketData(peer network.Peer,
     return this
 }
 
-func (this *gossipIXIImplementation) TriggerReceiveTransaction(peer network.Peer, transaction *model.Transaction) GossipIXI {
+func (this *gossipIXIImplementation) TriggerReceiveTransaction(peer network.Peer, transaction transaction.Transaction) GossipIXI {
     for _, handler := range this.receiveTransactionHandlers {
         handler(peer, transaction)
     }
