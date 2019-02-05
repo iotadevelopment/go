@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/iotadevelopment/go/modules/cli"
-	"github.com/iotadevelopment/go/modules/config"
-	"github.com/iotadevelopment/go/modules/gossip"
-	"github.com/iotadevelopment/go/modules/statusscreen"
-	"github.com/iotadevelopment/go/modules/tangle"
+	"github.com/iotadevelopment/go/plugins/cli"
+	"github.com/iotadevelopment/go/plugins/config"
+	"github.com/iotadevelopment/go/plugins/gossip"
+	"github.com/iotadevelopment/go/plugins/statusscreen"
+	"github.com/iotadevelopment/go/plugins/tangle"
 	"github.com/iotadevelopment/go/packages/ixi"
 )
 
