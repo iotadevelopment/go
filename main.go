@@ -20,9 +20,10 @@ func main() {
 		// add the gossip layer
 		gossip.MODULE,
 
+		// add persistence layer
 		tangle.MODULE,
 
-		// show a banner when the node has started
+		// show a status screen while the node is running
 		statusscreen.MODULE,
 	)
 
