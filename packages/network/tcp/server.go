@@ -11,7 +11,7 @@ type Server struct {
 }
 
 func (this *Server) Listen(port int) *Server {
-    l, err := net.Listen("tcp4", "127.0.0.1:"+strconv.Itoa(port))
+    l, err := net.Listen("tcp4", "0.0.0.0:"+strconv.Itoa(port))
     if err != nil {
         this.Events.Error.Trigger(err)
 
