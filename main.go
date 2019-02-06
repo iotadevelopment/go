@@ -1,12 +1,12 @@
 package main
 
 import (
+    "github.com/iotadevelopment/go/packages/ixi"
     "github.com/iotadevelopment/go/plugins/cli"
     "github.com/iotadevelopment/go/plugins/config"
     "github.com/iotadevelopment/go/plugins/gossip"
     "github.com/iotadevelopment/go/plugins/statusscreen"
     "github.com/iotadevelopment/go/plugins/tangle"
-    "github.com/iotadevelopment/go/packages/ixi"
 )
 
 func main() {

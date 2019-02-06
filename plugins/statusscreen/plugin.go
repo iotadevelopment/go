@@ -41,9 +41,11 @@ func PrintTPSParsed() {
 }
 
 var PLUGIN = ixi.NewPlugin(func() {
-    gossip.IXI().OnReceivePacketData(func(peer network.Peer, data []byte) {
+    gossip.Events.ReceivePacketData.Attach(func(peer network.Peer, data []byte) {
         tpsReceived++
-    }).OnReceiveTransaction(func(peer network.Peer, transaction transaction.Transaction) {
+    })
+
+    gossip.Events.ReceiveTransaction.Attach(func(peer network.Peer, transaction *transaction.Transaction) {
         tpsParsed++
     })
 }, func() {

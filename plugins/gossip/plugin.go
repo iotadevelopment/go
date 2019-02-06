@@ -1,45 +1,41 @@
 package gossip
 
 import (
+    "github.com/iotadevelopment/go/packages/network/tcp"
     "github.com/iotadevelopment/go/plugins/gossip/protocol"
     "github.com/iotadevelopment/go/packages/ixi"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/transaction"
 )
 
-var gossipIXI = IXI()
-var tcpServer = gossipIXI.GetTcpServer()
+var tcpServer = tcp.NewServer()
 
 func configure() {
     tcpServer.Events.Connect.Attach(func(peer network.Peer) {
-        gossipIXI.TriggerConnect(peer)
+        Events.Connect.Trigger(peer)
 
         gossipProtocol := protocol.NewProtocol().OnReceivePacketData(func(data []byte) {
-            gossipIXI.TriggerReceivePacketData(peer, data)
+            Events.ReceivePacketData.Trigger(peer, data)
 
             go parseTransaction(peer, data)
         })
 
         peer.OnReceiveData(func(data []byte) {
-            gossipIXI.TriggerReceiveData(peer, data)
+            Events.ReceiveData.Trigger(peer, data)
 
             gossipProtocol.ParseData(data)
         }).OnDisconnect(func() {
-            gossipIXI.TriggerDisconnect(peer)
+            Events.Disconnect.Trigger(peer)
         }).OnError(func(err error) {
-            gossipIXI.TriggerPeerError(peer, err)
+            Events.PeerError.Trigger(peer, err)
         })
     })
 
-    tcpServer.Events.Error.Attach(func(err error) {
-        gossipIXI.TriggerError(err)
-    })
+    tcpServer.Events.Error.Attach(Events.Error.Trigger)
 }
 
 func parseTransaction(peer network.Peer, data []byte) {
-    transaction := transaction.FromBytes(data)
-
-    gossipIXI.TriggerReceiveTransaction(peer, transaction)
+    Events.ReceiveTransaction.Trigger(peer, transaction.FromBytes(data))
 }
 
 func run() {

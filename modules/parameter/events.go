@@ -2,16 +2,7 @@ package parameter
 
 import "reflect"
 
-type moduleEvents struct {
-    AddInt    *intParameterEvent
-    AddString *stringParameterEvent
-}
-
 //region intParameterEvent /////////////////////////////////////////////////////////////////////////////////////////////
-
-type intParameterEvent struct {
-    callbacks map[uintptr]IntParameterConsumer
-}
 
 func (this *intParameterEvent) Attach(callback IntParameterConsumer) {
     this.callbacks[reflect.ValueOf(callback).Pointer()] = callback
@@ -30,10 +21,6 @@ func (this *intParameterEvent) Trigger(param *IntParameter) {
 //endregion ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //region stringParameterEvent //////////////////////////////////////////////////////////////////////////////////////////
-
-type stringParameterEvent struct {
-    callbacks map[uintptr]StringParameterConsumer
-}
 
 func (this *stringParameterEvent) Attach(callback StringParameterConsumer) {
     this.callbacks[reflect.ValueOf(callback).Pointer()] = callback

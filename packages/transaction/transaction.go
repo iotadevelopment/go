@@ -5,33 +5,10 @@ import (
     "github.com/iotadevelopment/go/packages/ternary"
 )
 
-type transactionImplementation struct {
-    SignatureMessageFragment      ternary.Trits
-    Address                       ternary.Trits
-    Value                         int64
-    ObsoleteTag                   ternary.Trits
-    Timestamp                     uint64
-    CurrentIndex                  uint64
-    LatestIndex                   uint64
-    BundleHash                    ternary.Trits
-    TrunkTransactionHash          ternary.Trits
-    BranchTransactionHash         ternary.Trits
-    Tag                           ternary.Trits
-    AttachmentTimestamp           uint64
-    AttachmentTimestampLowerBound uint64
-    AttachmentTimestampUpperBound uint64
-    Nonce                         ternary.Trits
-
-    Hash                          ternary.Trits
-    WeightMagnitude               int
-    Bytes                         []byte
-    Trits                         ternary.Trits
-}
-
-func FromTrits(trits ternary.Trits, optionalHash ...ternary.Trits) Transaction {
+func FromTrits(trits ternary.Trits, optionalHash ...ternary.Trits) *Transaction {
     hash := <- curl.CURLP81.Hash(trits)
 
-    transaction := &transactionImplementation{
+    transaction := &Transaction{
         SignatureMessageFragment:      trits[SIGNATURE_MESSAGE_FRAGMENT_OFFSET:SIGNATURE_MESSAGE_FRAGMENT_END],
         Address:                       trits[ADDRESS_OFFSET:ADDRESS_END],
         Value:                         trits[VALUE_OFFSET:VALUE_END].ToInt64(),
@@ -56,21 +33,9 @@ func FromTrits(trits ternary.Trits, optionalHash ...ternary.Trits) Transaction {
     return transaction
 }
 
-func FromBytes(bytes []byte) Transaction {
+func FromBytes(bytes []byte) *Transaction {
     transaction := FromTrits(ternary.BytesToTrits(bytes)[:TRANSACTION_SIZE])
-    transaction.SetBytes(bytes)
+    transaction.Bytes = bytes
 
     return transaction
-}
-
-func (this *transactionImplementation) GetHash() ternary.Trits {
-    return this.Hash
-}
-
-func (this *transactionImplementation) SetBytes(bytes []byte) {
-    this.Bytes = bytes
-}
-
-func (this *transactionImplementation) GetBytes() []byte {
-    return this.Bytes
 }

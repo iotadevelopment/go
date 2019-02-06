@@ -15,10 +15,10 @@ var PLUGIN = ixi.NewPlugin(func() {
 
     counter := 0
 
-    gossip.IXI().OnReceiveTransaction(func(peer network.Peer, transaction transaction.Transaction) {
+    gossip.Events.ReceiveTransaction.Attach(func(peer network.Peer, transaction *transaction.Transaction) {
         counter++
 
-        err := transactionsDatabase.Set([]byte(transaction.GetHash().ToString() + strconv.Itoa(counter)), transaction.GetBytes())
+        err := transactionsDatabase.Set([]byte(transaction.Hash.ToString() + strconv.Itoa(counter)), transaction.Bytes)
         if err != nil {
             fmt.Println(err)
         }
