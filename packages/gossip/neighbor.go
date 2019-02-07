@@ -53,7 +53,7 @@ func (this *Neighbor) SetOutgoingConnection(conn network.Connection) {
     this.out = conn
 
     // write the port (according to tcp protocol)
-    conn.Write([]byte(fmt.Sprintf("%010d", *(parameter.GetInt("gossip/PORT_TCP").Value))))
+    conn.Write([]byte(fmt.Sprintf("%010d", *(parameter.GetInt("GOSSIP/PORT_TCP").Value))))
 
     // dispatch raw low level events
     conn.OnReceiveData(this.Events.ReceiveData.Trigger)
