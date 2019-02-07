@@ -22,10 +22,12 @@ type Neighbor struct {
 func NewNeighbour() *Neighbor {
     neighbor := &Neighbor{
         Events: neighborEvents{
-            IncomingConnection: &callbackEvent{make(map[uintptr]Callback)},
-            ReceiveData:        &dataEvent{make(map[uintptr]DataConsumer)},
-            Disconnect:         &callbackEvent{make(map[uintptr]Callback)},
-            Error:              &errorEvent{make(map[uintptr]ErrorConsumer)},
+            IncomingConnection:     &callbackEvent{make(map[uintptr]Callback)},
+            ReceiveData:            &dataEvent{make(map[uintptr]DataConsumer)},
+            ReceiveTransactionData: &dataEvent{make(map[uintptr]DataConsumer)},
+            ReceiveTransaction:     &transactionEvent{make(map[uintptr]TransactionConsumer)},
+            Disconnect:             &callbackEvent{make(map[uintptr]Callback)},
+            Error:                  &errorEvent{make(map[uintptr]ErrorConsumer)},
         },
     }
 
