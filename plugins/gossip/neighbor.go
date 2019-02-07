@@ -2,10 +2,9 @@ package gossip
 
 import (
     "fmt"
-    "github.com/iotadevelopment/go/modules/parameter"
-    "github.com/iotadevelopment/go/plugins/gossip/tcpprotocol"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/transaction"
+    "github.com/iotadevelopment/go/plugins/gossip/tcpprotocol"
     "net"
     "strconv"
 )
@@ -19,7 +18,7 @@ type Neighbor struct {
     out      network.Connection
 }
 
-func NewNeighbour() *Neighbor {
+func newNeighbour() *Neighbor {
     neighbor := &Neighbor{
         Events: neighborEvents{
             IncomingConnection:     &callbackEvent{make(map[uintptr]Callback)},
@@ -53,7 +52,7 @@ func (this *Neighbor) SetOutgoingConnection(conn network.Connection) {
     this.out = conn
 
     // write the port (according to tcp protocol)
-    conn.Write([]byte(fmt.Sprintf("%010d", *(parameter.GetInt("GOSSIP/PORT_TCP").Value))))
+    conn.Write([]byte(fmt.Sprintf("%010d", *PORT_TCP.Value)))
 
     // dispatch raw low level events
     conn.OnReceiveData(this.Events.ReceiveData.Trigger)

@@ -11,7 +11,7 @@ var tcpServer = tcp.NewServer()
 
 func configure() {
     tcpServer.Events.Connect.Attach(func(conn network.Connection) {
-        neighbor := NewNeighbour()
+        neighbor := newNeighbour()
 
         neighbor.Events.IncomingConnection.Attach(func() {
             Events.Connect.Trigger(conn)
