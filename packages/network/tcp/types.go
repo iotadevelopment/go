@@ -19,4 +19,4 @@ type errorConsumerEvent struct {
 
 type ErrorConsumer = func(e error)
 
-type PeerConsumer = func(peer network.Peer)
+type PeerConsumer = func(peer network.Connection)

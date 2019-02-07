@@ -2,15 +2,16 @@ package network
 
 import "net"
 
-type Peer interface {
+type Connection interface {
     GetProtocol() string
     GetConnection() net.Conn
-    OnReceiveData(callback DataConsumer) Peer
-    OnDisconnect(callback Callback) Peer
-    OnError(callback ErrorConsumer) Peer
-    TriggerReceiveData(data []byte) Peer
-    TriggerDisconnect() Peer
-    TriggerError(err error) Peer
+    Write(data []byte)
+    OnReceiveData(callback DataConsumer) Connection
+    OnDisconnect(callback Callback) Connection
+    OnError(callback ErrorConsumer) Connection
+    TriggerReceiveData(data []byte) Connection
+    TriggerDisconnect() Connection
+    TriggerError(err error) Connection
     HandleConnection()
 }
 

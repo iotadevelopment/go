@@ -1,4 +1,4 @@
-package tcp
+package tcpprotocol
 
 type protocol struct {
     Events           protocolEvents
@@ -12,10 +12,10 @@ type protocol struct {
 func New() *protocol {
     protocol := &protocol{
         Events: protocolEvents{
-            ReceivePortData:               &dataEvent{make(map[uintptr]DataConsumer)},
+            ReceivePortData:               &intEvent{make(map[uintptr]IntConsumer)},
             ReceiveTransactionData:        &dataEvent{make(map[uintptr]DataConsumer)},
             ReceiveTransactionRequestData: &dataEvent{make(map[uintptr]DataConsumer)},
-            Error:                         &errorEvent{make(map[uintptr]DataConsumer)},
+            Error:                         &errorEvent{make(map[uintptr]ErrorConsumer)},
         },
 
         portState:        &portState{make([]byte, PORT_BYTES_COUNT), 0},
@@ -29,16 +29,14 @@ func New() *protocol {
     return protocol
 }
 
-func (this *protocol) ParseData(data []byte) error {
+func (this *protocol) ParseData(data []byte) {
     offset := 0
     length := len(data)
     for offset < length {
         readBytes, err := this.currentState.Consume(this, data, offset, length)
         offset += readBytes
         if err != nil {
-            return err
+            this.Events.Error.Trigger(err)
         }
     }
-
-    return nil
 }

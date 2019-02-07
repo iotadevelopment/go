@@ -1,13 +1,35 @@
-package tcp
+package tcpprotocol
 
 import "reflect"
 
 type protocolEvents struct {
-    ReceivePortData               *dataEvent
+    ReceivePortData               *intEvent
     ReceiveTransactionData        *dataEvent
     ReceiveTransactionRequestData *dataEvent
     Error                         *errorEvent
 }
+
+//region intEvent //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type intEvent struct {
+    callbacks map[uintptr]IntConsumer
+}
+
+func (this *intEvent) Attach(callback IntConsumer) {
+    this.callbacks[reflect.ValueOf(callback).Pointer()] = callback
+}
+
+func (this *intEvent) Detach(callback IntConsumer) {
+    delete(this.callbacks, reflect.ValueOf(callback).Pointer())
+}
+
+func (this *intEvent) Trigger(number int) {
+    for _, callback := range this.callbacks {
+        callback(number)
+    }
+}
+
+//endregion ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //region dataEvent /////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,20 +56,20 @@ func (this *dataEvent) Trigger(data []byte) {
 //region dataEvent /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type errorEvent struct {
-    callbacks map[uintptr]DataConsumer
+    callbacks map[uintptr]ErrorConsumer
 }
 
-func (this *errorEvent) Attach(callback DataConsumer) {
+func (this *errorEvent) Attach(callback ErrorConsumer) {
     this.callbacks[reflect.ValueOf(callback).Pointer()] = callback
 }
 
-func (this *errorEvent) Detach(callback DataConsumer) {
+func (this *errorEvent) Detach(callback ErrorConsumer) {
     delete(this.callbacks, reflect.ValueOf(callback).Pointer())
 }
 
-func (this *errorEvent) Trigger(data []byte) {
+func (this *errorEvent) Trigger(err error) {
     for _, callback := range this.callbacks {
-        callback(data)
+        callback(err)
     }
 }
 

@@ -1,4 +1,6 @@
-package tcp
+package tcpprotocol
+
+type IntConsumer = func(number int)
 
 type DataConsumer = func(data []byte)
 

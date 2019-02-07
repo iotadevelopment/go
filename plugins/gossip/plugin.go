@@ -1,60 +1,42 @@
 package gossip
 
 import (
-    "fmt"
-    tcpGossip "github.com/iotadevelopment/go/packages/gossipprotocol/tcp"
+    "github.com/iotadevelopment/go/packages/gossip"
     "github.com/iotadevelopment/go/packages/ixi"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/network/tcp"
     "github.com/iotadevelopment/go/packages/transaction"
-    "net"
-    "strconv"
 )
 
 var tcpServer = tcp.NewServer()
 
 func configure() {
-    tcpServer.Events.Connect.Attach(func(peer network.Peer) {
-        Events.Connect.Trigger(peer)
+    tcpServer.Events.Connect.Attach(func(conn network.Connection) {
+        neighbor := gossip.NewNeighbour()
 
-        gossipProtocol := tcpGossip.New()
-
-        gossipProtocol.Events.ReceivePortData.Attach(func(data []byte) {
-            port, _ := strconv.Atoi(string(data))
-
-            conn, err := net.Dial("tcp", "95.216.33.102:" + strconv.Itoa(port))
-            if err != nil {
-                panic(err)
-            }
-
-            _, err = conn.Write([]byte(fmt.Sprintf("%010d", *PORT_TCP.Value)))
-            if err != nil {
-                panic(err)
-            }
+        neighbor.Events.IncomingConnection.Attach(func() {
+            Events.Connect.Trigger(conn)
+        })
+        neighbor.Events.ReceiveData.Attach(func(data []byte) {
+            Events.ReceiveData.Trigger(conn, data)
+        })
+        neighbor.Events.ReceiveTransactionData.Attach(func(data []byte) {
+            Events.ReceiveTransactionData.Trigger(conn, data)
+        })
+        neighbor.Events.ReceiveTransaction.Attach(func(tx *transaction.Transaction) {
+            Events.ReceiveTransaction.Trigger(conn, tx)
+        })
+        neighbor.Events.Disconnect.Attach(func() {
+            Events.Disconnect.Trigger(conn)
+        })
+        neighbor.Events.Error.Attach(func(err error) {
+            Events.PeerError.Trigger(conn, err)
         })
 
-        gossipProtocol.Events.ReceiveTransactionData.Attach(func(data []byte) {
-            Events.ReceivePacketData.Trigger(peer, data)
-
-            go parseTransaction(peer, data)
-        })
-
-        peer.OnReceiveData(func(data []byte) {
-            Events.ReceiveData.Trigger(peer, data)
-
-            gossipProtocol.ParseData(data)
-        }).OnDisconnect(func() {
-            Events.Disconnect.Trigger(peer)
-        }).OnError(func(err error) {
-            Events.PeerError.Trigger(peer, err)
-        })
+        neighbor.SetIncomingConnection(conn)
     })
 
     tcpServer.Events.Error.Attach(Events.Error.Trigger)
-}
-
-func parseTransaction(peer network.Peer, data []byte) {
-    Events.ReceiveTransaction.Trigger(peer, transaction.FromBytes(data))
 }
 
 func run() {

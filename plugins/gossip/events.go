@@ -7,13 +7,13 @@ import (
 )
 
 type gossipEvents struct {
-    Connect            *peerEvent
-    Error              *errorEvent
-    ReceiveData        *peerDataEvent
-    Disconnect         *peerEvent
-    PeerError          *peerErrorEvent
-    ReceivePacketData  *peerDataEvent
-    ReceiveTransaction *peerTransactionEvent
+    Connect                *peerEvent
+    Error                  *errorEvent
+    ReceiveData            *peerDataEvent
+    Disconnect             *peerEvent
+    PeerError              *peerErrorEvent
+    ReceiveTransactionData *peerDataEvent
+    ReceiveTransaction     *peerTransactionEvent
 }
 
 //region peerEvent /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ func (this *peerEvent) Detach(callback PeerConsumer) {
     delete(this.callbacks, reflect.ValueOf(callback).Pointer())
 }
 
-func (this *peerEvent) Trigger(peer network.Peer) {
+func (this *peerEvent) Trigger(peer network.Connection) {
     for _, callback := range this.callbacks {
         callback(peer)
     }
@@ -74,7 +74,7 @@ func (this *peerDataEvent) Detach(callback PeerDataConsumer) {
     delete(this.callbacks, reflect.ValueOf(callback).Pointer())
 }
 
-func (this *peerDataEvent) Trigger(peer network.Peer, data []byte) {
+func (this *peerDataEvent) Trigger(peer network.Connection, data []byte) {
     for _, callback := range this.callbacks {
         callback(peer, data)
     }
@@ -96,7 +96,7 @@ func (this *peerErrorEvent) Detach(callback PeerErrorConsumer) {
     delete(this.callbacks, reflect.ValueOf(callback).Pointer())
 }
 
-func (this *peerErrorEvent) Trigger(peer network.Peer, err error) {
+func (this *peerErrorEvent) Trigger(peer network.Connection, err error) {
     for _, callback := range this.callbacks {
         callback(peer, err)
     }
@@ -118,7 +118,7 @@ func (this *peerTransactionEvent) Detach(callback PeerTransactionConsumer) {
     delete(this.callbacks, reflect.ValueOf(callback).Pointer())
 }
 
-func (this *peerTransactionEvent) Trigger(peer network.Peer, transaction *transaction.Transaction) {
+func (this *peerTransactionEvent) Trigger(peer network.Connection, transaction *transaction.Transaction) {
     for _, callback := range this.callbacks {
         callback(peer, transaction)
     }

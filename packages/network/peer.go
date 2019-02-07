@@ -14,7 +14,7 @@ type peerImplementation struct {
     errorHandlers       []ErrorConsumer
 }
 
-func NewPeer(protocol string, conn net.Conn) Peer {
+func NewPeer(protocol string, conn net.Conn) Connection {
     this := &peerImplementation{
         protocol:            protocol,
         conn:                conn,
@@ -34,25 +34,31 @@ func (this *peerImplementation) GetConnection() net.Conn {
     return this.conn
 }
 
-func (this *peerImplementation) OnReceiveData(callback DataConsumer) Peer {
+func (this *peerImplementation) Write(data []byte) {
+    if _, err := this.conn.Write(data); err != nil {
+        this.TriggerError(err)
+    }
+}
+
+func (this *peerImplementation) OnReceiveData(callback DataConsumer) Connection {
     this.receiveDataHandlers = append(this.receiveDataHandlers, callback)
 
     return this
 }
 
-func (this *peerImplementation) OnDisconnect(callback Callback) Peer {
+func (this *peerImplementation) OnDisconnect(callback Callback) Connection {
     this.disconnectHandlers = append(this.disconnectHandlers, callback)
 
     return this
 }
 
-func (this *peerImplementation) OnError(callback ErrorConsumer) Peer {
+func (this *peerImplementation) OnError(callback ErrorConsumer) Connection {
     this.errorHandlers = append(this.errorHandlers, callback)
 
     return this
 }
 
-func (this *peerImplementation) TriggerReceiveData(data []byte) Peer {
+func (this *peerImplementation) TriggerReceiveData(data []byte) Connection {
     for _, receiveDataHandler := range this.receiveDataHandlers {
         receiveDataHandler(data)
     }
@@ -60,7 +66,7 @@ func (this *peerImplementation) TriggerReceiveData(data []byte) Peer {
     return this
 }
 
-func (this *peerImplementation) TriggerDisconnect() Peer {
+func (this *peerImplementation) TriggerDisconnect() Connection {
     for _, disconnectHandler := range this.disconnectHandlers {
         disconnectHandler()
     }
@@ -68,7 +74,7 @@ func (this *peerImplementation) TriggerDisconnect() Peer {
     return this
 }
 
-func (this *peerImplementation) TriggerError(err error) Peer {
+func (this *peerImplementation) TriggerError(err error) Connection {
     for _, errorHandler := range this.errorHandlers {
         errorHandler(err)
     }

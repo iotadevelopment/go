@@ -1,4 +1,4 @@
-package tcp
+package tcpprotocol
 
 const (
     PORT_BYTES_COUNT        = 10

@@ -1,7 +1,8 @@
-package tcp
+package tcpprotocol
 
 import (
     "github.com/iotadevelopment/go/packages/byteutils"
+    "strconv"
 )
 
 //region portState /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -16,9 +17,13 @@ func (this *portState) Consume(protocol *protocol, data []byte, offset int, leng
 
     this.offset += bytesRead
     if this.offset == PORT_BYTES_COUNT {
-        portData := make([]byte, PORT_BYTES_COUNT)
-        copy(portData, this.buffer)
-        protocol.Events.ReceivePortData.Trigger(portData)
+        port, err := strconv.Atoi(string(this.buffer))
+        if err != nil {
+            protocol.Events.Error.Trigger(err)
+        } else {
+            protocol.Events.ReceivePortData.Trigger(port)
+        }
+
         this.offset = 0
 
         protocol.currentState = protocol.transactionState

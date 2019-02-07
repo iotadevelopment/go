@@ -33,7 +33,7 @@ func (this *peerConsumerEvent) Detach(callback PeerConsumer) {
     delete(this.callbacks, reflect.ValueOf(callback).Pointer())
 }
 
-func (this *peerConsumerEvent) Trigger(peer network.Peer) {
+func (this *peerConsumerEvent) Trigger(peer network.Connection) {
     for _, callback := range this.callbacks {
         callback(peer)
     }
