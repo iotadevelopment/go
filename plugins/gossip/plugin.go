@@ -1,7 +1,6 @@
 package gossip
 
 import (
-    "github.com/iotadevelopment/go/packages/gossip"
     "github.com/iotadevelopment/go/packages/ixi"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/network/tcp"
@@ -12,7 +11,7 @@ var tcpServer = tcp.NewServer()
 
 func configure() {
     tcpServer.Events.Connect.Attach(func(conn network.Connection) {
-        neighbor := gossip.NewNeighbour()
+        neighbor := NewNeighbour()
 
         neighbor.Events.IncomingConnection.Attach(func() {
             Events.Connect.Trigger(conn)

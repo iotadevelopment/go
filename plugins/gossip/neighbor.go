@@ -3,7 +3,7 @@ package gossip
 import (
     "fmt"
     "github.com/iotadevelopment/go/modules/parameter"
-    "github.com/iotadevelopment/go/packages/gossip/tcpprotocol"
+    "github.com/iotadevelopment/go/plugins/gossip/tcpprotocol"
     "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/transaction"
     "net"

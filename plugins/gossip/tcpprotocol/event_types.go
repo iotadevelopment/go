@@ -2,13 +2,6 @@ package tcpprotocol
 
 import "reflect"
 
-type protocolEvents struct {
-    ReceivePortData               *intEvent
-    ReceiveTransactionData        *dataEvent
-    ReceiveTransactionRequestData *dataEvent
-    Error                         *errorEvent
-}
-
 //region intEvent //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type intEvent struct {
