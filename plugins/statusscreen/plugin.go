@@ -21,22 +21,54 @@ func PrintBanner() {
     fmt.Println("   _| |_| | \\ \\ _| |_   / /_ | |_| |")
     fmt.Println("  |_____|_|  \\_\\_____| |____(_)___/")
     fmt.Println("")
+}
+
+func PrintPerformanceMetrics() {
     fmt.Println("")
     fmt.Println("  Performance metrics")
     fmt.Println("  ===================")
     fmt.Println("")
-}
-
-func PrintTPSReceived() {
     fmt.Println("  Transactions Per Second (received): ", int(float64(tpsReceived) / REFRESH_INTERVAL.Seconds()))
-
-    tpsReceived = 0
-}
-
-func PrintTPSParsed() {
     fmt.Println("  Transactions Per Second (parsed):   ", int(float64(tpsParsed) / REFRESH_INTERVAL.Seconds()))
 
+    tpsReceived = 0
     tpsParsed = 0
+}
+
+func PrintNeighbours() {
+    neighborManager := gossip.GetNeighborManager()
+
+    fmt.Println("")
+    fmt.Println("  Gossip Neighbors")
+    fmt.Println("  ================")
+    fmt.Println("")
+
+    neighbors := make([]string, 0)
+    for _, neighbor := range neighborManager.GetStaticNeighbors() {
+        neighbors = append(neighbors, neighbor.GetAddress())
+    }
+
+    for _, neighbor := range neighborManager.GetDynamicNeighbors() {
+        line := neighbor.GetAddress() + " (dynamic)"
+
+        if neighbor.UpstreamConnected() && !neighbor.DownstreamConnected() {
+            line += " [warning: only upstream connected]"
+        }
+
+        if neighbor.DownstreamConnected() && !neighbor.UpstreamConnected() {
+            line += " [warning: only downstream connected]"
+        }
+
+        neighbors = append(neighbors, line)
+    }
+
+    if (len(neighbors) >= 1) {
+        for _, line := range neighbors {
+            fmt.Println("  " + line)
+        }
+    } else {
+        fmt.Println("  <None>")
+    }
 }
 
 var PLUGIN = ixi.NewPlugin(func() {
@@ -56,8 +88,8 @@ var PLUGIN = ixi.NewPlugin(func() {
         terminal.Clear()
 
         PrintBanner()
-        PrintTPSReceived()
-        PrintTPSParsed()
+        PrintPerformanceMetrics()
+        PrintNeighbours()
 
         time.Sleep(REFRESH_INTERVAL)
     }

@@ -10,6 +10,14 @@ type NeighborManager struct {
     dynamicNeighbors map[string]*Neighbor
 }
 
+func (this *NeighborManager) GetStaticNeighbors() map[string]*Neighbor {
+    return this.staticNeighbors
+}
+
+func (this *NeighborManager) GetDynamicNeighbors() map[string]*Neighbor {
+    return this.dynamicNeighbors
+}
+
 func (this *NeighborManager) LaunchConnections() {
     for {
         select {

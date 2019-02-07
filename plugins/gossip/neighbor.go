@@ -36,6 +36,14 @@ func newNeighbour(host string, port int) *Neighbor {
     return neighbor
 }
 
+func (this *Neighbor) DownstreamConnected() bool {
+    return this.in != nil
+}
+
+func (this *Neighbor) UpstreamConnected() bool {
+    return this.out != nil
+}
+
 func (this *Neighbor) GetAddress() string {
     return this.host + ":" + strconv.Itoa(this.port)
 }
