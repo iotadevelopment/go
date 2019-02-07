@@ -1,13 +1,18 @@
 package gossip
 
+import "github.com/iotadevelopment/go/packages/network/tcp"
+
 var (
     Events = gossipEvents{
-        Connect:                &peerEvent{make(map[uintptr]PeerConsumer)},
+        ConnectUnknownNeighbor: &neighborEvent{make(map[uintptr]NeighborConsumer)},
         Error:                  &errorEvent{make(map[uintptr]ErrorConsumer)},
-        ReceiveData:            &peerDataEvent{make(map[uintptr]PeerDataConsumer)},
-        Disconnect:             &peerEvent{make(map[uintptr]PeerConsumer)},
-        PeerError:              &peerErrorEvent{make(map[uintptr]PeerErrorConsumer)},
-        ReceiveTransactionData: &peerDataEvent{make(map[uintptr]PeerDataConsumer)},
-        ReceiveTransaction:     &peerTransactionEvent{make(map[uintptr]PeerTransactionConsumer)},
     }
 )
+
+func GetTCPServer() *tcp.Server {
+    return tcpServer
+}
+
+func GetNeighborManager() *NeighborManager {
+    return neighborManager
+}

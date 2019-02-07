@@ -72,6 +72,28 @@ func (this *transactionEvent) Trigger(transaction *transaction.Transaction) {
 
 //endregion ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+//region neighborEvent /////////////////////////////////////////////////////////////////////////////////////////////////
+
+type neighborEvent struct {
+    callbacks map[uintptr]NeighborConsumer
+}
+
+func (this *neighborEvent) Attach(callback NeighborConsumer) {
+    this.callbacks[reflect.ValueOf(callback).Pointer()] = callback
+}
+
+func (this *neighborEvent) Detach(callback NeighborConsumer) {
+    delete(this.callbacks, reflect.ValueOf(callback).Pointer())
+}
+
+func (this *neighborEvent) Trigger(neighbor *Neighbor) {
+    for _, callback := range this.callbacks {
+        callback(neighbor)
+    }
+}
+
+//endregion ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 //region peerEvent /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type peerEvent struct {

@@ -1,7 +1,6 @@
 package network
 
 import (
-    "bufio"
     "io"
     "net"
 )
@@ -88,7 +87,7 @@ func (this *peerImplementation) HandleConnection() {
 
     receiveBuffer := make([]byte, READ_BUFFER_SIZE)
     for {
-        byteCount, err := bufio.NewReader(this.conn).Read(receiveBuffer)
+        byteCount, err := this.conn.Read(receiveBuffer)
         if err != nil {
             if err != io.EOF {
                 this.TriggerError(err)

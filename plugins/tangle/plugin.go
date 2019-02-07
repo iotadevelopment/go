@@ -2,11 +2,10 @@ package tangle
 
 import (
     "fmt"
-    "github.com/iotadevelopment/go/plugins/gossip"
     "github.com/iotadevelopment/go/packages/database"
     "github.com/iotadevelopment/go/packages/ixi"
     "github.com/iotadevelopment/go/packages/transaction"
-    "github.com/iotadevelopment/go/packages/network"
+    "github.com/iotadevelopment/go/plugins/gossip"
     "strconv"
 )
 
@@ -15,12 +14,13 @@ var PLUGIN = ixi.NewPlugin(func() {
 
     counter := 0
 
-    gossip.Events.ReceiveTransaction.Attach(func(peer network.Connection, transaction *transaction.Transaction) {
-        counter++
-
-        err := transactionsDatabase.Set([]byte(transaction.Hash.ToString() + strconv.Itoa(counter)), transaction.Bytes)
-        if err != nil {
-            fmt.Println(err)
-        }
+    neighborManager := gossip.GetNeighborManager()
+    neighborManager.Events.AddNeighbor.Attach(func(neighbor *gossip.Neighbor) {
+        neighbor.Events.ReceiveTransaction.Attach(func(transaction *transaction.Transaction) {
+            err := transactionsDatabase.Set([]byte(transaction.Hash.ToString() + strconv.Itoa(counter)), transaction.Bytes)
+            if err != nil {
+                fmt.Println(err)
+            }
+        })
     })
 })

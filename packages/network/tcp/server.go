@@ -29,9 +29,7 @@ func (this *Server) Listen(port int) *Server {
 
         peer := network.NewPeer("tcp", c)
 
-        this.Events.Connect.Trigger(peer)
-
-        go peer.HandleConnection()
+        go this.Events.Connect.Trigger(peer)
     }
 
     return this

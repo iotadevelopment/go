@@ -2,6 +2,7 @@ package main
 
 import (
     "github.com/iotadevelopment/go/packages/ixi"
+    "github.com/iotadevelopment/go/plugins/autopeering"
     "github.com/iotadevelopment/go/plugins/cli"
     "github.com/iotadevelopment/go/plugins/config"
     "github.com/iotadevelopment/go/plugins/gossip"
@@ -19,6 +20,9 @@ func main() {
 
         // add the gossip layer
         gossip.PLUGIN,
+
+        // allow auto peering
+        autopeering.PLUGIN,
 
         // add persistence layer
         tangle.PLUGIN,

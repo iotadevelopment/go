@@ -11,6 +11,8 @@ type DataConsumer = func(data []byte)
 
 type TransactionConsumer = func(transaction *transaction.Transaction)
 
+type NeighborConsumer = func(neighbor *Neighbor)
+
 type PeerConsumer = func(peer network.Connection)
 
 type ErrorConsumer = func(err error)

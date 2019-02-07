@@ -2,11 +2,10 @@ package statusscreen
 
 import (
     "fmt"
-    "github.com/iotadevelopment/go/plugins/gossip"
     "github.com/iotadevelopment/go/packages/ixi"
-    "github.com/iotadevelopment/go/packages/transaction"
-    "github.com/iotadevelopment/go/packages/network"
     "github.com/iotadevelopment/go/packages/terminal"
+    "github.com/iotadevelopment/go/packages/transaction"
+    "github.com/iotadevelopment/go/plugins/gossip"
     "time"
 )
 
@@ -41,12 +40,16 @@ func PrintTPSParsed() {
 }
 
 var PLUGIN = ixi.NewPlugin(func() {
-    gossip.Events.ReceiveTransactionData.Attach(func(peer network.Connection, data []byte) {
-        tpsReceived++
-    })
+    neighborManager := gossip.GetNeighborManager()
 
-    gossip.Events.ReceiveTransaction.Attach(func(peer network.Connection, transaction *transaction.Transaction) {
-        tpsParsed++
+    neighborManager.Events.AddNeighbor.Attach(func(neighbor *gossip.Neighbor) {
+        neighbor.Events.ReceiveTransactionData.Attach(func(data []byte) {
+            tpsReceived++
+        })
+
+        neighbor.Events.ReceiveTransaction.Attach(func(transaction *transaction.Transaction) {
+            tpsParsed++
+        })
     })
 }, func() {
     for {

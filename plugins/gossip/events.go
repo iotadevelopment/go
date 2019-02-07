@@ -1,13 +1,13 @@
 package gossip
 
 type gossipEvents struct {
-    Connect                *peerEvent
+    ConnectUnknownNeighbor *neighborEvent
     Error                  *errorEvent
-    ReceiveData            *peerDataEvent
-    Disconnect             *peerEvent
-    PeerError              *peerErrorEvent
-    ReceiveTransactionData *peerDataEvent
-    ReceiveTransaction     *peerTransactionEvent
+}
+
+type neighborManagerEvents struct {
+    AddNeighbor    *neighborEvent
+    RemoveNeighbor *neighborEvent
 }
 
 type neighborEvents struct {
