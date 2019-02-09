@@ -56,11 +56,10 @@ func (this *BCTCurl) Transform() {
                 scratchPadIndex -= 365
             }
 
-            gamma := scratchPadHi[scratchPadIndex]
-            delta := (alpha | (^gamma)) & (scratchPadLo[scratchPadIndex] ^ beta)
+            delta := beta ^ scratchPadLo[scratchPadIndex]
 
-            this.state.Lo[stateIndex] = ^delta
-            this.state.Hi[stateIndex] = (alpha ^ gamma) | delta
+            this.state.Lo[stateIndex] = ^(delta & alpha)
+            this.state.Hi[stateIndex] = delta | (alpha ^ scratchPadHi[scratchPadIndex])
         }
     }
 }
