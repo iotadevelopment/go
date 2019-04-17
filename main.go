@@ -6,6 +6,7 @@ import (
     "github.com/iotadevelopment/go/plugins/cli"
     "github.com/iotadevelopment/go/plugins/config"
     "github.com/iotadevelopment/go/plugins/gossip"
+    "github.com/iotadevelopment/go/plugins/recording"
     "github.com/iotadevelopment/go/plugins/statusscreen"
     "github.com/iotadevelopment/go/plugins/tangle"
 )
@@ -26,6 +27,8 @@ func main() {
 
         // add persistence layer
         tangle.PLUGIN,
+
+        recording.PLUGIN,
 
         // show a status screen while the node is running
         statusscreen.PLUGIN,

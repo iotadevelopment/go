@@ -2,28 +2,6 @@ package tcpprotocol
 
 import "reflect"
 
-//region intEvent //////////////////////////////////////////////////////////////////////////////////////////////////////
-
-type intEvent struct {
-    callbacks map[uintptr]IntConsumer
-}
-
-func (this *intEvent) Attach(callback IntConsumer) {
-    this.callbacks[reflect.ValueOf(callback).Pointer()] = callback
-}
-
-func (this *intEvent) Detach(callback IntConsumer) {
-    delete(this.callbacks, reflect.ValueOf(callback).Pointer())
-}
-
-func (this *intEvent) Trigger(number int) {
-    for _, callback := range this.callbacks {
-        callback(number)
-    }
-}
-
-//endregion ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 //region dataEvent /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type dataEvent struct {

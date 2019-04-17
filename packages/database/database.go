@@ -8,6 +8,9 @@ import (
 )
 
 var databasesByName = make(map[string]*databaseImpl)
+var getLock sync.Mutex
+
+var ErrKeyNotFound = badger.ErrKeyNotFound
 
 type databaseImpl struct {
     db       *badger.DB
@@ -15,17 +18,25 @@ type databaseImpl struct {
     openLock sync.Mutex
 }
 
-func Get(name string) Database {
+func Get(name string) (Database, error) {
+    getLock.Lock()
+    defer getLock.Unlock()
+
     if database, exists := databasesByName[name]; exists {
-        return database
+        return database, nil
     }
 
-    databasesByName[name] = &databaseImpl{
+    database := &databaseImpl{
         db:   nil,
         name: name,
     }
+    if err := database.Open(); err != nil {
+        return nil, err
+    }
 
-    return databasesByName[name]
+    databasesByName[name] = database
+
+    return databasesByName[name], nil
 }
 
 func (this *databaseImpl) Open() error {
@@ -58,10 +69,6 @@ func (this *databaseImpl) Open() error {
 }
 
 func (this *databaseImpl) Set(key []byte, value []byte) error {
-    if err := this.Open(); err != nil {
-        return err
-    }
-
     if err := this.db.Update(func(txn *badger.Txn) error { return txn.Set(key, value) }); err != nil {
         return err
     }
@@ -73,20 +80,18 @@ func (this *databaseImpl) Get(key []byte) ([]byte, error) {
     var result []byte = nil
     var err error = nil
 
-    if err = this.Open(); err == nil {
-        err = this.db.View(func(txn *badger.Txn) error {
-            item, err := txn.Get(key)
-            if err != nil {
-                return err
-            }
+    err = this.db.View(func(txn *badger.Txn) error {
+        item, err := txn.Get(key)
+        if err != nil {
+            return err
+        }
 
-            return item.Value(func(val []byte) error {
-                result = append([]byte{}, val...)
+        return item.Value(func(val []byte) error {
+            result = append([]byte{}, val...)
 
-                return nil
-            })
+            return nil
         })
-    }
+    })
 
     return result, err
 }

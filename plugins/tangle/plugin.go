@@ -6,21 +6,44 @@ import (
     "github.com/iotadevelopment/go/packages/ixi"
     "github.com/iotadevelopment/go/packages/transaction"
     "github.com/iotadevelopment/go/plugins/gossip"
-    "strconv"
 )
 
-var PLUGIN = ixi.NewPlugin(func() {
-    transactionsDatabase := database.Get("transactions")
+var transactionsDatabase, err = database.Get("transactions")
 
-    counter := 0
+func StoreTransaction(transaction *transaction.Transaction) {
+    transactionHash := []byte(transaction.Hash.ToString())
 
+    _, err := transactionsDatabase.Get(transactionHash)
+    if err == database.ErrKeyNotFound {
+        err := transactionsDatabase.Set(transactionHash, transaction.Bytes)
+        if err != nil {
+            fmt.Println(err)
+        }
+    }
+}
+
+func setupEventHandlers(neighbor *gossip.Neighbor) {
+    neighbor.Events.ReceiveTransaction.Attach(StoreTransaction)
+}
+
+func tearDownEventHandlers(neighbor *gossip.Neighbor) {
+    neighbor.Events.ReceiveTransaction.Detach(StoreTransaction)
+}
+
+func configure() {
     neighborManager := gossip.GetNeighborManager()
-    neighborManager.Events.AddNeighbor.Attach(func(neighbor *gossip.Neighbor) {
-        neighbor.Events.ReceiveTransaction.Attach(func(transaction *transaction.Transaction) {
-            err := transactionsDatabase.Set([]byte(transaction.Hash.ToString() + strconv.Itoa(counter)), transaction.Bytes)
-            if err != nil {
-                fmt.Println(err)
-            }
-        })
-    })
-})
+
+    // setup event handlers for existing neighbors
+    for _, neighbor := range neighborManager.GetStaticNeighbors() {
+        setupEventHandlers(neighbor)
+    }
+    for _, neighbor := range neighborManager.GetDynamicNeighbors() {
+        setupEventHandlers(neighbor)
+    }
+
+    // setup event handlers for new neighbors
+    neighborManager.Events.AddNeighbor.Attach(setupEventHandlers)
+    neighborManager.Events.RemoveNeighbor.Attach(tearDownEventHandlers)
+}
+
+var PLUGIN = ixi.NewPlugin(configure)
